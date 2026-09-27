@@ -1,0 +1,35 @@
+# Secrets and local configuration (never committed; .env.example is the template)
+.env
+.env.*
+!.env.example
+secrets/
+*.pem
+*.key
+backups/
+
+# Documentation stays local: every Markdown file except the root README
+*.md
+!/README.md
+
+# Python: virtual environment, bytecode, test / lint / coverage caches
+.venv/
+**/__pycache__/
+*.pyc
+.pytest_cache/
+.hypothesis/
+.ruff_cache/
+.coverage
+.coverage.*
+htmlcov/
+backend/run/
+
+# Web: installed packages and build output
+web/node_modules/
+web/dist/
+
+# Editors, operating systems and local agent settings
+.vscode/
+.idea/
+.claude/
+.DS_Store
+Thumbs.db

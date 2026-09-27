@@ -1,0 +1,111 @@
+# Continuous integration: runs on every push to main and on every pull request; all jobs must pass before merging.
+# Supply chain: pin every action to a full commit SHA (Dependabot keeps the SHAs current).
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  backend:
+    runs-on: ubuntu-24.04
+    defaults:
+      run:
+        working-directory: backend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install locked dependencies
+        run: pip install -r requirements-dev.lock
+      - name: Lint
+        run: ruff check .
+      - name: Static security scan
+        run: bandit -q -ll -r app devidp scripts
+      - name: Dependency vulnerabilities
+        run: pip-audit -r requirements.lock
+      - name: Golden vectors are up to date
+        run: python scripts/gen_golden.py && git diff --exit-code tests/golden
+      - name: Tests (unit, property, integration on embedded PostgreSQL) with coverage gates
+        run: |
+          python -m pytest -q --cov=app --cov-fail-under=80
+          python -m coverage report --include="app/domain/*" --fail-under=95
+
+  web:
+    runs-on: ubuntu-24.04
+    defaults:
+      run:
+        working-directory: web
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm run lint
+      - run: npm run build
+      - name: Dependency vulnerabilities
+        run: npm audit --omit=dev --audit-level=high
+
+  e2e:
+    needs: [backend, web]
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+      - run: pip install -r backend/requirements-dev.lock
+      - run: python -m playwright install --with-deps chromium
+      - run: npm ci
+        working-directory: web
+      - name: Browser tests T-E2E-01…06 (dev IdP, api, worker and Vite on an embedded PostgreSQL)
+        run: E2E=1 python -m pytest -q tests/e2e
+        working-directory: backend
+
+  secrets:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Secret scan (whole history)
+        run: docker run --rm -v "$PWD:/repo" zricethezav/gitleaks:latest detect --source /repo --no-banner --redact
+
+  images:
+    needs: [backend, web]
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Compose file is valid
+        run: |
+          cp .env.example .env
+          sed -i 's/^POSTGRES_PASSWORD=.*/POSTGRES_PASSWORD=ci-only-not-secret/; s/^APEX_OWNER_PASSWORD=.*/APEX_OWNER_PASSWORD=ci-only-not-secret/; s/^APEX_APP_PASSWORD=.*/APEX_APP_PASSWORD=ci-only-not-secret/; s/^DEVIDP_DEMO_PASSWORD=.*/DEVIDP_DEMO_PASSWORD=ci-only-not-secret/' .env
+          docker compose --env-file .env -f deploy/docker-compose.yml --profile demo config --quiet
+      - name: Build images
+        run: |
+          docker build -f deploy/Dockerfile.backend -t apexresolve-backend:ci .
+          docker build -f deploy/Dockerfile.web -t apexresolve-web:ci .
+      - name: Scan images (fail on fixable HIGH or CRITICAL)
+        run: |
+          for image in apexresolve-backend:ci apexresolve-web:ci; do
+            docker run --rm -v /var/run/docker.sock:/var/run/docker.sock aquasec/trivy:latest image \
+              --exit-code 1 --severity HIGH,CRITICAL --ignore-unfixed "$image"
+          done

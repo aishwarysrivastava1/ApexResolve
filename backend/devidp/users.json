@@ -1,0 +1,33 @@
+{
+  "cm-asha": {
+    "role": "cardmember",
+    "name": "Asha Verma"
+  },
+  "cm-ravi": {
+    "role": "cardmember",
+    "name": "Ravi Menon"
+  },
+  "mer-acme": {
+    "role": "merchant",
+    "name": "Acme Electronics staff",
+    "merchant_id": "M_ACME"
+  },
+  "mer-skyline": {
+    "role": "merchant",
+    "name": "Skyline Travels staff",
+    "merchant_id": "M_SKYLINE"
+  },
+  "mer-pageturner": {
+    "role": "merchant",
+    "name": "PageTurner Books staff",
+    "merchant_id": "M_PAGETURNER"
+  },
+  "rev-neha": {
+    "role": "reviewer",
+    "name": "Neha (reviewer)"
+  },
+  "aud-kabir": {
+    "role": "auditor",
+    "name": "Kabir (auditor)"
+  }
+}

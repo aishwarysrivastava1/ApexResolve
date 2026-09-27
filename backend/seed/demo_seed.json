@@ -1,0 +1,39 @@
+{
+  "merchants": [
+    {"merchant_id": "M_ACME", "name": "Acme Electronics", "return_postcode": "400001", "se_numbers": ["1000000001", "1000000002"]},
+    {"merchant_id": "M_SKYLINE", "name": "Skyline Travels", "return_postcode": "600001", "se_numbers": ["2000000001"]},
+    {"merchant_id": "M_PAGETURNER", "name": "PageTurner Books", "return_postcode": "700001", "se_numbers": ["3000000001"]}
+  ],
+  "accounts": [
+    {"account_token": "acct_asha_01", "cardmember_ref": "cm-asha", "status": "OPEN", "shipping_postcode": "110001", "display_name": "Asha Verma", "card_display_mask": "371449*****8431"},
+    {"account_token": "acct_ravi_01", "cardmember_ref": "cm-ravi", "status": "OPEN", "shipping_postcode": "560001", "display_name": "Ravi Menon", "card_display_mask": "378282*****0005"}
+  ],
+  "transactions": [
+    {"transaction_id": "TXN-C08-OK", "account_token": "acct_asha_01", "se_number": "1000000001", "kind": "CHARGE", "amount_minor": 499900, "currency": "INR", "minutes_ago": 17280, "order_ref": "ORD-7781", "expected_delivery_days_ago": 5},
+    {"transaction_id": "TXN-C08-LOST", "account_token": "acct_asha_01", "se_number": "1000000001", "kind": "CHARGE", "amount_minor": 249900, "currency": "INR", "minutes_ago": 28800, "order_ref": "ORD-7790", "expected_delivery_days_ago": 12},
+    {"transaction_id": "TXN-C08-WRONG", "account_token": "acct_asha_01", "se_number": "1000000002", "kind": "CHARGE", "amount_minor": 199900, "currency": "INR", "minutes_ago": 12960, "order_ref": "ORD-7802", "expected_delivery_days_ago": 4},
+    {"transaction_id": "TXN-P08-A", "account_token": "acct_asha_01", "se_number": "3000000001", "kind": "CHARGE", "amount_minor": 129900, "currency": "INR", "minutes_ago": 4320, "order_ref": "ORD-5520"},
+    {"transaction_id": "TXN-P08-B", "account_token": "acct_asha_01", "se_number": "3000000001", "kind": "CHARGE", "amount_minor": 129900, "currency": "INR", "minutes_ago": 4313, "order_ref": "ORD-5520"},
+    {"transaction_id": "TXN-C31", "account_token": "acct_ravi_01", "se_number": "1000000002", "kind": "CHARGE", "amount_minor": 349900, "currency": "INR", "minutes_ago": 21600, "order_ref": "ORD-8123", "expected_delivery_days_ago": 10},
+    {"transaction_id": "TXN-C02-OPEN", "account_token": "acct_ravi_01", "se_number": "2000000001", "kind": "CHARGE", "amount_minor": 250000, "currency": "INR", "minutes_ago": 43200, "order_ref": "BK-4410"},
+    {"transaction_id": "TXN-C02-CREDITED", "account_token": "acct_ravi_01", "se_number": "2000000001", "kind": "CHARGE", "amount_minor": 180000, "currency": "INR", "minutes_ago": 36000, "order_ref": "BK-4415"},
+    {"transaction_id": "TXN-C02-CREDITED-R", "account_token": "acct_ravi_01", "se_number": "2000000001", "kind": "CREDIT", "amount_minor": 180000, "currency": "INR", "minutes_ago": 28800, "order_ref": "BK-4415", "original_transaction_id": "TXN-C02-CREDITED"},
+    {"transaction_id": "TXN-OLD", "account_token": "acct_asha_01", "se_number": "1000000001", "kind": "CHARGE", "amount_minor": 99900, "currency": "INR", "minutes_ago": 216000, "order_ref": "ORD-6001"},
+    {"transaction_id": "TXN-BIG", "account_token": "acct_ravi_01", "se_number": "2000000001", "kind": "CHARGE", "amount_minor": 7500000, "currency": "INR", "minutes_ago": 14400, "order_ref": "BK-4499"}
+  ],
+  "carrier_fixtures": {
+    "BLUEDART:AWB10000001": {"status": "DELIVERED", "postcode": "110001"},
+    "DELHIVERY:AWB10000002": {"status": "NOT_DELIVERED"},
+    "DTDC:AWB10000003": {"status": "DELIVERED", "postcode": "560099"},
+    "INDIA_POST:RET20000001": {"status": "DELIVERED", "postcode": "400001"}
+  },
+  "devidp_users": {
+    "cm-asha": {"role": "cardmember", "name": "Asha Verma"},
+    "cm-ravi": {"role": "cardmember", "name": "Ravi Menon"},
+    "mer-acme": {"role": "merchant", "name": "Acme Electronics staff", "merchant_id": "M_ACME"},
+    "mer-skyline": {"role": "merchant", "name": "Skyline Travels staff", "merchant_id": "M_SKYLINE"},
+    "mer-pageturner": {"role": "merchant", "name": "PageTurner Books staff", "merchant_id": "M_PAGETURNER"},
+    "rev-neha": {"role": "reviewer", "name": "Neha (reviewer)"},
+    "aud-kabir": {"role": "auditor", "name": "Kabir (auditor)"}
+  }
+}

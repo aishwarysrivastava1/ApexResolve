@@ -1,0 +1,17 @@
+{
+  "BLUEDART:AWB10000001": {
+    "status": "DELIVERED",
+    "postcode": "110001"
+  },
+  "DELHIVERY:AWB10000002": {
+    "status": "NOT_DELIVERED"
+  },
+  "DTDC:AWB10000003": {
+    "status": "DELIVERED",
+    "postcode": "560099"
+  },
+  "INDIA_POST:RET20000001": {
+    "status": "DELIVERED",
+    "postcode": "400001"
+  }
+}

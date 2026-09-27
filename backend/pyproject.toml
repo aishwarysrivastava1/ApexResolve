@@ -1,0 +1,37 @@
+[project]
+name = "apexresolve-backend"
+version = "2.0.0"
+requires-python = ">=3.12"
+dependencies = [
+  "fastapi",
+  "uvicorn[standard]",
+  "sqlalchemy[asyncio]>=2.0",
+  "asyncpg",
+  "pydantic>=2",
+  "pydantic-settings",
+  "python-multipart",
+  "pyjwt[crypto]",
+  "cryptography",
+  "httpx",
+  "pyyaml",
+  "pillow",
+]
+
+[project.optional-dependencies]
+dev = ["pytest", "pytest-cov", "hypothesis", "pgserver", "ruff", "bandit", "pip-audit", "playwright"]
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
+testpaths = ["tests"]
+
+[tool.ruff]
+line-length = 120
+
+[tool.ruff.lint]
+# explicit rule set so every ruff version checks the same things
+select = ["E", "F", "W", "B", "S"]
+ignore = ["B008"]   # FastAPI's Depends(...) in default arguments is the documented pattern
+
+[tool.ruff.lint.per-file-ignores]
+"scripts/*" = ["E501", "S311"]
+"tests/*" = ["E501", "E402", "E401", "S101", "S105", "S106", "S108", "B011"]

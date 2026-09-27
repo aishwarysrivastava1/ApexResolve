@@ -1,0 +1,530 @@
+[
+  {
+    "id": "G01",
+    "title": "C08: carrier API confirms delivery to the cardmember's postcode",
+    "reason_code": "C08",
+    "disputed_amount_minor": 499900,
+    "currency": "INR",
+    "risk_flag": null,
+    "evidence": [
+      {
+        "evidence_type": "carrier_delivery_confirmation",
+        "source": "system_verified"
+      },
+      {
+        "evidence_type": "written_statement",
+        "source": "self_attested"
+      }
+    ],
+    "v_m": "0.9",
+    "v_cm": "0.045",
+    "margin": "0.855",
+    "margin_bp": 8550,
+    "outcome": "DECIDED",
+    "rule_id": "R4_MERCHANT_EVIDENCE_STRONGER",
+    "verdict": "MERCHANT_UPHELD",
+    "refund_amount_minor": 0
+  },
+  {
+    "id": "G02",
+    "title": "C08: signed proof of delivery uploaded",
+    "reason_code": "C08",
+    "disputed_amount_minor": 499900,
+    "currency": "INR",
+    "risk_flag": null,
+    "evidence": [
+      {
+        "evidence_type": "signed_proof_of_delivery",
+        "source": "document"
+      },
+      {
+        "evidence_type": "written_statement",
+        "source": "self_attested"
+      }
+    ],
+    "v_m": "0.56",
+    "v_cm": "0.045",
+    "margin": "0.515",
+    "margin_bp": 5150,
+    "outcome": "DECIDED",
+    "rule_id": "R4_MERCHANT_EVIDENCE_STRONGER",
+    "verdict": "MERCHANT_UPHELD",
+    "refund_amount_minor": 0
+  },
+  {
+    "id": "G03",
+    "title": "C08: carrier API says not delivered",
+    "reason_code": "C08",
+    "disputed_amount_minor": 499900,
+    "currency": "INR",
+    "risk_flag": null,
+    "evidence": [
+      {
+        "evidence_type": "carrier_not_delivered",
+        "source": "system_verified"
+      },
+      {
+        "evidence_type": "merchant_statement",
+        "source": "self_attested"
+      },
+      {
+        "evidence_type": "written_statement",
+        "source": "self_attested"
+      }
+    ],
+    "v_m": "0.045",
+    "v_cm": "0.9045",
+    "margin": "-0.8595",
+    "margin_bp": -8595,
+    "outcome": "DECIDED",
+    "rule_id": "R5_CARDMEMBER_EVIDENCE_STRONGER",
+    "verdict": "CARDMEMBER_REFUND",
+    "refund_amount_minor": 499900
+  },
+  {
+    "id": "G04",
+    "title": "C08: carrier delivered to a different postcode; merchant uploads signed POD",
+    "reason_code": "C08",
+    "disputed_amount_minor": 499900,
+    "currency": "INR",
+    "risk_flag": null,
+    "evidence": [
+      {
+        "evidence_type": "carrier_wrong_address",
+        "source": "system_verified"
+      },
+      {
+        "evidence_type": "signed_proof_of_delivery",
+        "source": "document"
+      },
+      {
+        "evidence_type": "written_statement",
+        "source": "self_attested"
+      }
+    ],
+    "v_m": "0.56",
+    "v_cm": "0.85675",
+    "margin": "-0.29675",
+    "margin_bp": -2968,
+    "outcome": "SETTLEMENT_OFFERED",
+    "rule_id": "R6_SETTLEMENT_OFFER",
+    "verdict": null,
+    "refund_amount_minor": 324123
+  },
+  {
+    "id": "G05",
+    "title": "C08: statements only on both sides (small amount)",
+    "reason_code": "C08",
+    "disputed_amount_minor": 499900,
+    "currency": "INR",
+    "risk_flag": null,
+    "evidence": [
+      {
+        "evidence_type": "merchant_statement",
+        "source": "self_attested"
+      },
+      {
+        "evidence_type": "written_statement",
+        "source": "self_attested"
+      }
+    ],
+    "v_m": "0.045",
+    "v_cm": "0.045",
+    "margin": "0",
+    "margin_bp": 0,
+    "outcome": "SETTLEMENT_OFFERED",
+    "rule_id": "R6_SETTLEMENT_OFFER",
+    "verdict": null,
+    "refund_amount_minor": 249950
+  },
+  {
+    "id": "G06",
+    "title": "C08: statements only, amount above the offer limit",
+    "reason_code": "C08",
+    "disputed_amount_minor": 2000000,
+    "currency": "INR",
+    "risk_flag": null,
+    "evidence": [
+      {
+        "evidence_type": "merchant_statement",
+        "source": "self_attested"
+      },
+      {
+        "evidence_type": "written_statement",
+        "source": "self_attested"
+      }
+    ],
+    "v_m": "0.045",
+    "v_cm": "0.045",
+    "margin": "0",
+    "margin_bp": 0,
+    "outcome": "HUMAN_REVIEW",
+    "rule_id": "R7_AMBIGUOUS",
+    "verdict": null,
+    "refund_amount_minor": null
+  },
+  {
+    "id": "G07",
+    "title": "C08: amount above the automation limit",
+    "reason_code": "C08",
+    "disputed_amount_minor": 6000000,
+    "currency": "INR",
+    "risk_flag": null,
+    "evidence": [
+      {
+        "evidence_type": "carrier_delivery_confirmation",
+        "source": "system_verified"
+      },
+      {
+        "evidence_type": "written_statement",
+        "source": "self_attested"
+      }
+    ],
+    "v_m": "0.9",
+    "v_cm": "0.045",
+    "margin": "0.855",
+    "margin_bp": 8550,
+    "outcome": "HUMAN_REVIEW",
+    "rule_id": "R1_AMOUNT_ABOVE_AUTO_LIMIT",
+    "verdict": null,
+    "refund_amount_minor": null
+  },
+  {
+    "id": "G08",
+    "title": "C08: non-base currency",
+    "reason_code": "C08",
+    "disputed_amount_minor": 499900,
+    "currency": "USD",
+    "risk_flag": null,
+    "evidence": [
+      {
+        "evidence_type": "carrier_delivery_confirmation",
+        "source": "system_verified"
+      },
+      {
+        "evidence_type": "written_statement",
+        "source": "self_attested"
+      }
+    ],
+    "v_m": "0.9",
+    "v_cm": "0.045",
+    "margin": "0.855",
+    "margin_bp": 8550,
+    "outcome": "HUMAN_REVIEW",
+    "rule_id": "R2_NON_BASE_CURRENCY",
+    "verdict": null,
+    "refund_amount_minor": null
+  },
+  {
+    "id": "G09",
+    "title": "C08: dispute-velocity risk flag",
+    "reason_code": "C08",
+    "disputed_amount_minor": 499900,
+    "currency": "INR",
+    "risk_flag": "HIGH_DISPUTE_VELOCITY",
+    "evidence": [
+      {
+        "evidence_type": "carrier_delivery_confirmation",
+        "source": "system_verified"
+      },
+      {
+        "evidence_type": "written_statement",
+        "source": "self_attested"
+      }
+    ],
+    "v_m": "0.9",
+    "v_cm": "0.045",
+    "margin": "0.855",
+    "margin_bp": 8550,
+    "outcome": "HUMAN_REVIEW",
+    "rule_id": "R3_RISK_FLAG",
+    "verdict": null,
+    "refund_amount_minor": null
+  },
+  {
+    "id": "G10",
+    "title": "C08: unverifiable tracking vs cardmember correspondence",
+    "reason_code": "C08",
+    "disputed_amount_minor": 499900,
+    "currency": "INR",
+    "risk_flag": null,
+    "evidence": [
+      {
+        "evidence_type": "carrier_delivery_confirmation",
+        "source": "self_attested"
+      },
+      {
+        "evidence_type": "merchant_statement",
+        "source": "self_attested"
+      },
+      {
+        "evidence_type": "merchant_correspondence",
+        "source": "document"
+      },
+      {
+        "evidence_type": "written_statement",
+        "source": "self_attested"
+      }
+    ],
+    "v_m": "0.30285",
+    "v_cm": "0.37925",
+    "margin": "-0.0764",
+    "margin_bp": -764,
+    "outcome": "SETTLEMENT_OFFERED",
+    "rule_id": "R6_SETTLEMENT_OFFER",
+    "verdict": null,
+    "refund_amount_minor": 269046
+  },
+  {
+    "id": "G11",
+    "title": "C31: listing proof vs cardmember photos",
+    "reason_code": "C31",
+    "disputed_amount_minor": 349900,
+    "currency": "INR",
+    "risk_flag": null,
+    "evidence": [
+      {
+        "evidence_type": "description_match_proof",
+        "source": "document"
+      },
+      {
+        "evidence_type": "item_photos",
+        "source": "document"
+      },
+      {
+        "evidence_type": "written_statement",
+        "source": "self_attested"
+      }
+    ],
+    "v_m": "0.42",
+    "v_cm": "0.4461",
+    "margin": "-0.0261",
+    "margin_bp": -261,
+    "outcome": "SETTLEMENT_OFFERED",
+    "rule_id": "R6_SETTLEMENT_OFFER",
+    "verdict": null,
+    "refund_amount_minor": 179516
+  },
+  {
+    "id": "G12",
+    "title": "C31: cardmember accepted the item in writing",
+    "reason_code": "C31",
+    "disputed_amount_minor": 349900,
+    "currency": "INR",
+    "risk_flag": null,
+    "evidence": [
+      {
+        "evidence_type": "cardmember_acceptance",
+        "source": "document"
+      },
+      {
+        "evidence_type": "description_match_proof",
+        "source": "document"
+      },
+      {
+        "evidence_type": "written_statement",
+        "source": "self_attested"
+      }
+    ],
+    "v_m": "0.7448",
+    "v_cm": "0.045",
+    "margin": "0.6998",
+    "margin_bp": 6998,
+    "outcome": "DECIDED",
+    "rule_id": "R4_MERCHANT_EVIDENCE_STRONGER",
+    "verdict": "MERCHANT_UPHELD",
+    "refund_amount_minor": 0
+  },
+  {
+    "id": "G13",
+    "title": "C31: verified return shipment plus photos",
+    "reason_code": "C31",
+    "disputed_amount_minor": 349900,
+    "currency": "INR",
+    "risk_flag": null,
+    "evidence": [
+      {
+        "evidence_type": "return_shipment",
+        "source": "system_verified"
+      },
+      {
+        "evidence_type": "item_photos",
+        "source": "document"
+      },
+      {
+        "evidence_type": "merchant_statement",
+        "source": "self_attested"
+      },
+      {
+        "evidence_type": "written_statement",
+        "source": "self_attested"
+      }
+    ],
+    "v_m": "0.045",
+    "v_cm": "0.83383",
+    "margin": "-0.78883",
+    "margin_bp": -7888,
+    "outcome": "DECIDED",
+    "rule_id": "R5_CARDMEMBER_EVIDENCE_STRONGER",
+    "verdict": "CARDMEMBER_REFUND",
+    "refund_amount_minor": 349900
+  },
+  {
+    "id": "G14",
+    "title": "C02: credit promise vs refund-policy disclosure",
+    "reason_code": "C02",
+    "disputed_amount_minor": 250000,
+    "currency": "INR",
+    "risk_flag": null,
+    "evidence": [
+      {
+        "evidence_type": "credit_acknowledgment",
+        "source": "document"
+      },
+      {
+        "evidence_type": "refund_policy_disclosure",
+        "source": "document"
+      },
+      {
+        "evidence_type": "written_statement",
+        "source": "self_attested"
+      }
+    ],
+    "v_m": "0.42",
+    "v_cm": "0.613225",
+    "margin": "-0.193225",
+    "margin_bp": -1932,
+    "outcome": "SETTLEMENT_OFFERED",
+    "rule_id": "R6_SETTLEMENT_OFFER",
+    "verdict": null,
+    "refund_amount_minor": 149153
+  },
+  {
+    "id": "G15",
+    "title": "P08 (inconclusive fact check): merchant proves two distinct orders",
+    "reason_code": "P08",
+    "disputed_amount_minor": 129900,
+    "currency": "INR",
+    "risk_flag": null,
+    "evidence": [
+      {
+        "evidence_type": "distinct_orders_proof",
+        "source": "document"
+      },
+      {
+        "evidence_type": "written_statement",
+        "source": "self_attested"
+      }
+    ],
+    "v_m": "0.595",
+    "v_cm": "0.045",
+    "margin": "0.55",
+    "margin_bp": 5500,
+    "outcome": "DECIDED",
+    "rule_id": "R4_MERCHANT_EVIDENCE_STRONGER",
+    "verdict": "MERCHANT_UPHELD",
+    "refund_amount_minor": 0
+  },
+  {
+    "id": "G16",
+    "title": "G05 with the merchant statement repeated five times (no stacking)",
+    "reason_code": "C08",
+    "disputed_amount_minor": 499900,
+    "currency": "INR",
+    "risk_flag": null,
+    "evidence": [
+      {
+        "evidence_type": "merchant_statement",
+        "source": "self_attested"
+      },
+      {
+        "evidence_type": "merchant_statement",
+        "source": "self_attested"
+      },
+      {
+        "evidence_type": "merchant_statement",
+        "source": "self_attested"
+      },
+      {
+        "evidence_type": "merchant_statement",
+        "source": "self_attested"
+      },
+      {
+        "evidence_type": "merchant_statement",
+        "source": "self_attested"
+      },
+      {
+        "evidence_type": "written_statement",
+        "source": "self_attested"
+      }
+    ],
+    "v_m": "0.045",
+    "v_cm": "0.045",
+    "margin": "0",
+    "margin_bp": 0,
+    "outcome": "SETTLEMENT_OFFERED",
+    "rule_id": "R6_SETTLEMENT_OFFER",
+    "verdict": null,
+    "refund_amount_minor": 249950
+  },
+  {
+    "id": "G17",
+    "title": "C31: only non-compelling merchant evidence (repair offer) vs cardmember statement",
+    "reason_code": "C31",
+    "disputed_amount_minor": 349900,
+    "currency": "INR",
+    "risk_flag": null,
+    "evidence": [
+      {
+        "evidence_type": "repair_or_replacement_offer",
+        "source": "document"
+      },
+      {
+        "evidence_type": "merchant_statement",
+        "source": "self_attested"
+      },
+      {
+        "evidence_type": "written_statement",
+        "source": "self_attested"
+      }
+    ],
+    "v_m": "0.3124",
+    "v_cm": "0.045",
+    "margin": "0.2674",
+    "margin_bp": 2674,
+    "outcome": "SETTLEMENT_OFFERED",
+    "rule_id": "R6_SETTLEMENT_OFFER",
+    "verdict": null,
+    "refund_amount_minor": 128168
+  },
+  {
+    "id": "G18",
+    "title": "C08: evidence that belongs to another reason code is ignored",
+    "reason_code": "C08",
+    "disputed_amount_minor": 499900,
+    "currency": "INR",
+    "risk_flag": null,
+    "evidence": [
+      {
+        "evidence_type": "cardmember_acceptance",
+        "source": "document"
+      },
+      {
+        "evidence_type": "merchant_statement",
+        "source": "self_attested"
+      },
+      {
+        "evidence_type": "written_statement",
+        "source": "self_attested"
+      }
+    ],
+    "v_m": "0.045",
+    "v_cm": "0.045",
+    "margin": "0",
+    "margin_bp": 0,
+    "outcome": "SETTLEMENT_OFFERED",
+    "rule_id": "R6_SETTLEMENT_OFFER",
+    "verdict": null,
+    "refund_amount_minor": 249950
+  }
+]

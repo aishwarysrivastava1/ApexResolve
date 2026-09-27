@@ -1,0 +1,78 @@
+# ApexResolve decision policy — the ONE source of truth for every number the engine uses.
+# Integers only (basis points "bp" where 10000 = 1.0; money in minor units, e.g. paise).
+policy_version: "2026.09.1"
+base_currency: "INR"
+timezone: "Asia/Kolkata"            # calendar days for filing windows are counted in this zone
+
+windows:
+  filing_window_days: 120           # Amex network rule, counted from the anchor date (inclusive last day)
+  merchant_response_days: 20        # merchant must contest or accept within this many days
+  cardmember_rebuttal_days: 7       # cardmember may answer the merchant's evidence
+  settlement_offer_days: 5          # both parties must accept an offer within this many days
+  appeal_window_days: 5             # automated decisions can be appealed once within this window
+
+anchor_date:                        # which date the filing window is counted from
+  C08: "later_of_transaction_or_expected_delivery"
+  C31: "transaction_date"
+  C02: "transaction_date"
+  P08: "transaction_date"
+
+thresholds:
+  merchant_win_margin_bp: 4000      # margin >= +0.40 (and a compelling merchant item) -> MERCHANT_UPHELD
+  cardmember_win_margin_bp: -4000   # margin <= -0.40 -> CARDMEMBER_REFUND
+
+limits:
+  max_auto_amount_minor: 5000000    # above INR 50,000.00 a human always decides
+  max_offer_amount_minor: 1000000   # settlement offers only up to INR 10,000.00
+  min_offer_amount_minor: 200       # and only from INR 2.00 (so both shares are at least 1 paisa)
+  max_open_disputes_per_cardmember: 5
+  max_filings_per_day: 10           # per cardmember, rolling 24 hours (abuse control)
+  max_evidence_items_per_side: 20
+  max_file_bytes: 5242880           # 5 MiB
+  max_text_chars: 2000
+
+risk:
+  velocity_window_days: 90          # look-back window for the dispute-velocity flag
+  velocity_prior_disputes: 3        # this many earlier disputes in the window -> HUMAN_REVIEW
+
+duplicate_check:
+  window_hours: 72                  # P08: a second identical charge within 72 hours
+
+source_reliability_bp:              # how much an item is trusted, by how it was obtained
+  system_verified: 10000            # confirmed by a system (carrier API, Amex records)
+  document: 7000                    # an uploaded file
+  self_attested: 3000               # a typed statement
+
+# evidence_type -> side it supports, who may submit it, weight, whether it is compelling,
+# and which submission produces it ("file" = document upload, "text" = statement,
+# "tracking" = carrier verification, "system" = created only by the server)
+evidence_catalogue:
+  C08:
+    carrier_delivery_confirmation: {side: MERCHANT,   weight_bp: 9000, compelling: true,  produced_by: tracking}
+    signed_proof_of_delivery:      {side: MERCHANT,   weight_bp: 8000, compelling: true,  produced_by: file}
+    digital_delivery_log:          {side: MERCHANT,   weight_bp: 7000, compelling: true,  produced_by: file}
+    merchant_statement:            {side: MERCHANT,   weight_bp: 1500, compelling: false, produced_by: text}
+    carrier_not_delivered:         {side: CARDMEMBER, weight_bp: 9000, compelling: false, produced_by: tracking}
+    carrier_wrong_address:         {side: CARDMEMBER, weight_bp: 8500, compelling: false, produced_by: tracking}
+    merchant_correspondence:       {side: CARDMEMBER, weight_bp: 5000, compelling: false, produced_by: file}
+    written_statement:             {side: CARDMEMBER, weight_bp: 1500, compelling: false, produced_by: text}
+  C31:
+    description_match_proof:       {side: MERCHANT,   weight_bp: 6000, compelling: true,  produced_by: file}
+    cardmember_acceptance:         {side: MERCHANT,   weight_bp: 8000, compelling: true,  produced_by: file}
+    repair_or_replacement_offer:   {side: MERCHANT,   weight_bp: 4000, compelling: false, produced_by: file}
+    merchant_statement:            {side: MERCHANT,   weight_bp: 1500, compelling: false, produced_by: text}
+    item_photos:                   {side: CARDMEMBER, weight_bp: 6000, compelling: false, produced_by: file}
+    return_shipment:               {side: CARDMEMBER, weight_bp: 7000, compelling: false, produced_by: tracking}
+    merchant_correspondence:       {side: CARDMEMBER, weight_bp: 5000, compelling: false, produced_by: file}
+    written_statement:             {side: CARDMEMBER, weight_bp: 1500, compelling: false, produced_by: text}
+  C02:
+    refund_policy_disclosure:      {side: MERCHANT,   weight_bp: 6000, compelling: true,  produced_by: file}
+    merchant_statement:            {side: MERCHANT,   weight_bp: 1500, compelling: false, produced_by: text}
+    credit_acknowledgment:         {side: CARDMEMBER, weight_bp: 8500, compelling: false, produced_by: file}
+    return_shipment:               {side: CARDMEMBER, weight_bp: 7000, compelling: false, produced_by: tracking}
+    written_statement:             {side: CARDMEMBER, weight_bp: 1500, compelling: false, produced_by: text}
+  P08:
+    distinct_orders_proof:         {side: MERCHANT,   weight_bp: 8500, compelling: true,  produced_by: file}
+    merchant_statement:            {side: MERCHANT,   weight_bp: 1500, compelling: false, produced_by: text}
+    single_order_proof:            {side: CARDMEMBER, weight_bp: 8000, compelling: false, produced_by: file}
+    written_statement:             {side: CARDMEMBER, weight_bp: 1500, compelling: false, produced_by: text}

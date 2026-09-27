@@ -1,0 +1,146 @@
+# One host, one command: docker compose --env-file .env -f deploy/docker-compose.yml up -d --build
+name: apexresolve
+
+x-backend: &backend
+  build:
+    context: ..
+    dockerfile: deploy/Dockerfile.backend
+  image: apexresolve-backend:local
+  restart: unless-stopped
+
+x-backend-env: &backend-env
+  APP_ENV: ${APP_ENV:?set APP_ENV in .env}
+  DATABASE_URL: postgresql+asyncpg://apex_app:${APEX_APP_PASSWORD:?set APEX_APP_PASSWORD}@db:5432/apex
+  POLICY_PATH: /app/policy/policy.2026.09.1.yaml
+  LEDGER_SIGNING_KEY_PATH: /app/keys/ledger_signing_key.pem
+  LEDGER_KEY_ID: ${LEDGER_KEY_ID:?set LEDGER_KEY_ID}
+  CARRIER_FIXTURES_PATH: fixtures/carrier.json
+  OIDC_ISSUER: ${OIDC_ISSUER:-apexresolve-devidp}
+  OIDC_AUDIENCE: ${OIDC_AUDIENCE:-apexresolve-api}
+  OIDC_JWKS_URL: ${OIDC_JWKS_URL:-http://devidp:9000/jwks.json}
+  CORS_ORIGINS: ${CORS_ORIGINS:-}
+  RATE_LIMIT_PER_MINUTE: ${RATE_LIMIT_PER_MINUTE:-120}
+  MAINTENANCE_MODE: ${MAINTENANCE_MODE:-false}
+
+x-backend-volumes: &backend-volumes
+  - ../policy:/app/policy:ro
+  - ledger_key:/app/keys:ro
+
+services:
+  db:
+    image: postgres:16
+    environment:
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD}
+      APEX_OWNER_PASSWORD: ${APEX_OWNER_PASSWORD:?set APEX_OWNER_PASSWORD}
+      APEX_APP_PASSWORD: ${APEX_APP_PASSWORD:?set APEX_APP_PASSWORD}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./db-init:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+    restart: unless-stopped
+    # no "ports:" on purpose: the database is reachable only inside this compose network
+
+  # creates the Ed25519 ledger signing key once, inside a named volume (it never touches the host disk)
+  keygen:
+    <<: *backend
+    command: ["sh", "-c", "test -f /app/keys/ledger_signing_key.pem || python scripts/make_ledger_key.py /app/keys/ledger_signing_key.pem"]
+    volumes:
+      - ledger_key:/app/keys
+    restart: "no"
+
+  migrate:
+    <<: *backend
+    command: ["python", "scripts/migrate.py", "migrations"]
+    environment:
+      APP_ENV: ${APP_ENV}
+      MIGRATION_DATABASE_URL: postgresql://apex_owner:${APEX_OWNER_PASSWORD}@db:5432/apex
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: "no"
+
+  seed:
+    <<: *backend
+    profiles: ["demo"]
+    command: ["python", "scripts/seed_demo.py", "seed/demo_seed.json"]
+    environment:
+      APP_ENV: ${APP_ENV}
+      MIGRATION_DATABASE_URL: postgresql://apex_owner:${APEX_OWNER_PASSWORD}@db:5432/apex
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+    restart: "no"
+
+  devidp:
+    <<: *backend
+    command: ["uvicorn", "devidp.main:app_from_env", "--factory", "--host", "0.0.0.0", "--port", "9000"]
+    environment:
+      APP_ENV: ${APP_ENV}
+      DEVIDP_ISSUER: apexresolve-devidp
+      DEVIDP_AUDIENCE: apexresolve-api
+      DEVIDP_USERS_PATH: devidp/users.json
+      DEVIDP_DEMO_PASSWORD: ${DEVIDP_DEMO_PASSWORD:?set DEVIDP_DEMO_PASSWORD}
+
+  api:
+    <<: *backend
+    environment: *backend-env
+    volumes: *backend-volumes
+    read_only: true
+    tmpfs: ["/tmp"]
+    depends_on:
+      keygen:
+        condition: service_completed_successfully
+      migrate:
+        condition: service_completed_successfully
+      devidp:
+        condition: service_started
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/readyz', timeout=3)"]
+      interval: 10s
+      timeout: 5s
+      retries: 6
+
+  worker:
+    <<: *backend
+    command: ["python", "-m", "app.worker"]
+    environment:
+      <<: *backend-env
+      WORKER_HEARTBEAT_PATH: /app/run/worker-heartbeat
+    volumes: *backend-volumes
+    read_only: true
+    tmpfs: ["/tmp", "/app/run:uid=10001"]
+    depends_on:
+      keygen:
+        condition: service_completed_successfully
+      migrate:
+        condition: service_completed_successfully
+    healthcheck:
+      test: ["CMD", "python", "-c", "import os,sys,time; sys.exit(0 if time.time() - os.path.getmtime('/app/run/worker-heartbeat') < 30 else 1)"]
+      interval: 15s
+      timeout: 5s
+      retries: 4
+
+  web:
+    build:
+      context: ..
+      dockerfile: deploy/Dockerfile.web
+    environment:
+      SITE_ADDRESS: ${SITE_ADDRESS:-:80}
+    ports:
+      - "${HTTP_PORT:-8080}:80"
+      - "${HTTPS_PORT:-8443}:443"
+    volumes:
+      - caddy_data:/data
+    depends_on:
+      api:
+        condition: service_healthy
+    restart: unless-stopped
+
+volumes:
+  pgdata: {}
+  ledger_key: {}     # the private signing key; the public keys are also stored in the ledger_keys table
+  caddy_data: {}
