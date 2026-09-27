@@ -40,11 +40,11 @@
 | 1. [Overview](#1-overview) | 10. [Security and privacy](#10-security-and-privacy) | 19. [Demo walkthrough](#19-demo-walkthrough) |
 | 2. [Features](#2-features) | 11. [Web application](#11-web-application) | 20. [Decision memo](#20-decision-memo) |
 | 3. [Specifications](#3-specifications) | 12. [Technology stack](#12-technology-stack) | 21. [Engineering rules](#21-engineering-rules) |
-| 4. [Dispute lifecycle](#4-dispute-lifecycle) | 13. [Repository layout](#13-repository-layout) | 22. [From v1 to v2](#22-from-v1-to-v2) |
-| 5. [Decision engine](#5-decision-engine) | 14. [Getting started](#14-getting-started) | 23. [Metrics and fairness](#23-metrics-and-fairness) |
-| 6. [Architecture](#6-architecture) | 15. [Configuration](#15-configuration) | 24. [Limitations and roadmap](#24-limitations-and-roadmap) |
-| 7. [Tamper-evident audit ledger](#7-tamper-evident-audit-ledger) | 16. [Testing and quality](#16-testing-and-quality) | 25. [Glossary](#25-glossary) |
-| 8. [Data model](#8-data-model) | 17. [Deployment guide](#17-deployment-guide) | 26. [Disclaimer](#26-disclaimer) |
+| 4. [Dispute lifecycle](#4-dispute-lifecycle) | 13. [Repository layout](#13-repository-layout) | 22. [Metrics and fairness](#22-metrics-and-fairness) |
+| 5. [Decision engine](#5-decision-engine) | 14. [Getting started](#14-getting-started) | 23. [Limitations and roadmap](#23-limitations-and-roadmap) |
+| 6. [Architecture](#6-architecture) | 15. [Configuration](#15-configuration) | 24. [Glossary](#24-glossary) |
+| 7. [Tamper-evident audit ledger](#7-tamper-evident-audit-ledger) | 16. [Testing and quality](#16-testing-and-quality) | 25. [Disclaimer](#25-disclaimer) |
+| 8. [Data model](#8-data-model) | 17. [Deployment guide](#17-deployment-guide) | |
 | 9. [API reference](#9-api-reference) | 18. [Operations runbook](#18-operations-runbook) | |
 
 ---
@@ -1967,53 +1967,7 @@ These are the rules every change must keep. A change that breaks an invariant is
 
 ---
 
-## 22. From v1 to v2
-
-v2 is a redesign, not a patch. It resolves all **148** audit items of v1: 137 findings plus 11 complexity items.
-
-| Severity | Items | Resolved | Resolved with a documented limitation |
-|---|---|---|---|
-| Critical | 12 | 12 | 0 |
-| High | 37 | 36 | 1 |
-| Medium | 65 | 60 | 5 |
-| Low | 23 | 23 | 0 |
-| Complexity | 11 | 11 | 0 |
-| **Total** | **148** | **142** | **6** |
-
-| Area | v1 | v2 |
-|---|---|---|
-| Identity | Forgeable prefix "tokens", a static shared key | Real JWT validation against the IdP's JWKS; four roles; not-yours = `404` |
-| Decisions | A composite score biased toward merchants, several contradictory rule versions, floats | One ordered decision table over reliability-weighted, deduplicated noisy-OR evidence; exact fractions; 18 golden vectors; property tests |
-| Lifecycle | Three different state machines, none enforced, no timers | One transition table, row locks, database-backed timers |
-| Money | Fabricated charge-offs, fake provisional credit | Money moves once, after the appeal window, through an idempotent outbox with double entry |
-| Ledger | Unverifiable chain, a public HMAC key, forks under concurrency | Stored-field SHA-256 chain, Ed25519 signatures, serialized appends, external checkpoints, append-only tables |
-| Privacy | PANs leaked in errors, broken regexes, data sent to a hosted LLM | Checksum-validated redaction before storage, no echo, no third-party AI |
-| Infrastructure | Kubernetes, four edge layers, replicas, WebSockets | One host: Docker Compose + Caddy; polling |
-
-<details>
-<summary><b>What was removed, and why</b></summary>
-
-| v1 element | v2 | Reason |
-|---|---|---|
-| Public `/evaluate` endpoint with a static key | Worker only | Anyone could trigger decisions |
-| Prefix "JWT" tokens | Real JWT + JWKS | Forgeable |
-| S_F composite with procedural weights | Lifecycle gates + evidence margin | Merchant bias; meaningless thresholds |
-| HMAC-over-SHA256 chain, timestamp not stored | Stored fields, Ed25519, head lock, checkpoints | Unverifiable; forked under concurrency |
-| Merge engine with client-side versions | Append-only typed evidence items | Data loss and complexity |
-| Provisional credit + fabricated charge-off | Removed; money moves once, at the end | Fake money flows |
-| 117/118-day window bypass | `claim_received_at` freezes rights | Later stages consumed the cardmember's window |
-| "Dual buffer bands", a special "No Evidence" branch | Deleted | Undefined or unreachable behaviour |
-| An LLM in the decision path | Templates; optional assist off by default | Non-deterministic; injection; residency |
-| EKS, autoscaling, read replica, four edge layers | Compose + Caddy on one host | Accidental complexity |
-| WebSockets | Polling | Status changes are hours or days apart |
-| Next.js SSR | Vite React SPA | Extra server runtime and attack surface |
-| SQLite fallback | PostgreSQL only, fail fast | No row locks, no `SKIP LOCKED` |
-
-</details>
-
----
-
-## 23. Metrics and fairness
+## 22. Metrics and fairness
 
 Let 𝒟 be the disputes **closed** in the reporting period, excluding `REJECTED_INELIGIBLE`. `GET /api/v1/metrics/summary` returns counts by state (now) plus:
 
@@ -2037,9 +1991,9 @@ Rates are exact decimal strings (display only), or `null` when the denominator i
 
 ---
 
-## 24. Limitations and roadmap
+## 23. Limitations and roadmap
 
-### 24.1 Known limitations (accepted for the prototype)
+### 23.1 Known limitations (accepted for the prototype)
 
 | Limitation | Mitigation now | Later |
 |---|---|---|
@@ -2052,16 +2006,16 @@ Rates are exact decimal strings (display only), or `null` when the denominator i
 | Insider with the signing key before the first external checkpoint | Checkpoints every 100 events plus on demand | KMS custody + WORM checkpoints |
 | The dev IdP in the demo | Needed for persona switching | Enterprise IdP in production |
 
-### 24.2 Roadmap
+### 23.2 Roadmap
 
-- **v2.1 UI backlog:** a consent checkbox and a confirmation screen after filing; per-type help text in the evidence form; evidence grouped by side; colour-coded due dates in the merchant queue; a "How was this decided?" expander linking to the policy; shareable dispute URLs; a public-keys panel for auditors; metrics by reason code; all UI text in one module for translation (Hindi first).
-- **v2.1 platform:** automated retention purges; ledger archiving (export, then a new chain anchored to the last checkpoint); appeal/overturn rates and parity gaps in the metrics endpoint; NER redaction.
+- **v1.1 UI backlog:** a consent checkbox and a confirmation screen after filing; per-type help text in the evidence form; evidence grouped by side; colour-coded due dates in the merchant queue; a "How was this decided?" expander linking to the policy; shareable dispute URLs; a public-keys panel for auditors; metrics by reason code; all UI text in one module for translation (Hindi first).
+- **v1.1 platform:** automated retention purges; ledger archiving (export, then a new chain anchored to the last checkpoint); appeal/overturn rates and parity gaps in the metrics endpoint; NER redaction.
 - **Optional (off by default):** the guarded AI paraphrase (F-17), under strict rules: structured fields only in, validated text out, labelled "AI-generated", an in-region zero-retention endpoint, never stored, and the official template always shown.
 - **After the competition:** (1) expert review of the reason-code rules and evidence weights with dispute specialists; (2) recalibration on labelled historical outcomes; (3) the [production path](#1710-production-path); (4) a formal penetration test.
 
 ---
 
-## 25. Glossary
+## 24. Glossary
 
 <details>
 <summary><b>Terms as this project uses them</b></summary>
@@ -2100,7 +2054,7 @@ Rates are exact decimal strings (display only), or `null` when the denominator i
 
 ---
 
-## 26. Disclaimer
+## 25. Disclaimer
 
 Facts about card-network behaviour come only from public sources: American Express's published merchant dispute guidance (reason-code titles, the 120-day filing window with the goods-not-received extension, the 20-day merchant response) and, for context only, U.S. Regulation Z §1026.13. Standards referenced: ISO/IEC/IEEE 29148 (requirements), RFC 7519 (JWT), RFC 9457 (problem details), RFC 8785 (JSON canonicalization, used as a model), WCAG 2.2 and the OWASP ASVS.
 
