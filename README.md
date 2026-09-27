@@ -21,7 +21,7 @@
 ![Decisions](https://img.shields.io/badge/decisions-rules%20%2B%20evidence%2C%20no%20ML-blueviolet)
 ![Data](https://img.shields.io/badge/data-synthetic%20only-orange)
 
-**Team The CrownBreakers** · Aishwary Srivastava · Eshaan Singla · Sukhmanpreet Singh · **American Express Codestreet 2026**
+**Aishwary Srivastava**
 
 </div>
 
