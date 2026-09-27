@@ -2100,15 +2100,12 @@ Rates are exact decimal strings (display only), or `null` when the denominator i
 
 ---
 
-## 26. Team and disclaimer
-
-Built by team **The CrownBreakers** for **American Express Codestreet 2026**:
-
-- **Aishwary Srivastava**
-- **Eshaan Singla**
-- **Sukhmanpreet Singh**
+## 26. Disclaimer
 
 Facts about card-network behaviour come only from public sources: American Express's published merchant dispute guidance (reason-code titles, the 120-day filing window with the goods-not-received extension, the 20-day merchant response) and, for context only, U.S. Regulation Z §1026.13. Standards referenced: ISO/IEC/IEEE 29148 (requirements), RFC 7519 (JWT), RFC 9457 (problem details), RFC 8785 (JSON canonicalization, used as a model), WCAG 2.2 and the OWASP ASVS.
 
 > [!CAUTION]
 > ApexResolve is an **independent student prototype**. It is **not affiliated with, endorsed by or connected to American Express**. All data is **synthetic**: the card numbers are public test numbers and every person, merchant and transaction is fictional. Card-network rules are modelled from public guidance and are **not legal advice**. Do not use this software with real cardholder data.
+
+
+Built by **Aishwary Srivastava**
