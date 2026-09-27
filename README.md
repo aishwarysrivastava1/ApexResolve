@@ -44,7 +44,7 @@
 | 5. [Decision engine](#5-decision-engine) | 14. [Getting started](#14-getting-started) | 23. [Metrics and fairness](#23-metrics-and-fairness) |
 | 6. [Architecture](#6-architecture) | 15. [Configuration](#15-configuration) | 24. [Limitations and roadmap](#24-limitations-and-roadmap) |
 | 7. [Tamper-evident audit ledger](#7-tamper-evident-audit-ledger) | 16. [Testing and quality](#16-testing-and-quality) | 25. [Glossary](#25-glossary) |
-| 8. [Data model](#8-data-model) | 17. [Deployment guide](#17-deployment-guide) | 26. [Team and disclaimer](#26-team-and-disclaimer) |
+| 8. [Data model](#8-data-model) | 17. [Deployment guide](#17-deployment-guide) | 26. [Disclaimer](#26-disclaimer) |
 | 9. [API reference](#9-api-reference) | 18. [Operations runbook](#18-operations-runbook) | |
 
 ---
