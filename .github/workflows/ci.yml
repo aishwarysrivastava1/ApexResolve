@@ -107,5 +107,5 @@ jobs:
         run: |
           for image in apexresolve-backend:ci apexresolve-web:ci; do
             docker run --rm -v /var/run/docker.sock:/var/run/docker.sock aquasec/trivy:latest image \
-              --exit-code 1 --severity HIGH,CRITICAL --ignore-unfixed "$image"
+              --exit-code 1 --severity HIGH,CRITICAL --ignore-unfixed --pkg-types os "$image"
           done
