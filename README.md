@@ -1813,7 +1813,7 @@ Logs are JSON lines. Access: `{"ts", "event": "request", "request_id", "method",
 
 ## 19. Demo walkthrough
 
-> *"ApexResolve is an independent student prototype built for Codestreet 2026. It is not affiliated with or endorsed by American Express, and everything you will see uses synthetic data."*
+> *"ApexResolve is an independent student prototype. It is not affiliated with or endorsed by American Express, and everything you will see uses synthetic data."*
 
 ### 19.1 Scenarios on the demo seed
 
@@ -1875,13 +1875,6 @@ After the demo, run `make demo-reset` so the tampered ledger is not the next dem
 ---
 
 ## 20. Decision memo
-
-| | |
-|---|---|
-| **Subject** | How ApexResolve decides disputes, moves money and proves what happened |
-| **Audience** | Reviewers, judges and future maintainers |
-| **From** | Team The CrownBreakers |
-| **Status** | Accepted for v2.0; thresholds to be recalibrated on real labelled data |
 
 ### 20.1 Bottom line
 
