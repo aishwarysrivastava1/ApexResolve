@@ -1956,8 +1956,6 @@ These are the rules every change must keep. A change that breaks an invariant is
 
 **The simplicity charter.** No new dependency, service, table, state, event, endpoint or environment variable without a written decision record and approval. Python: no nested functions or closures, functions ≤ 60 lines (the one documented exception is the numbered filing procedure), nesting ≤ 3 levels, no custom decorators or metaprogramming, SQL only via `text()` with named parameters, and one short plain-English comment per step. TypeScript: `strict`, no `any`, no `dangerouslySetInnerHTML`, the token in memory only, money only through `formatMoney`/`parseMoney`.
 
-**Changing the policy** (weights, thresholds, windows) is a reviewed change: new `policy_version`, the sensitivity procedure, `make golden` with every changed vector explained, and approval by two team members. CI fails if the committed golden vectors and the engine ever disagree.
-
 ---
 
 ## 22. Metrics and fairness
